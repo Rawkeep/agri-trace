@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="appTitle">agri-trace — Lot Traceability</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header id="app-header">
+  <h1 data-i18n="appTitle">agri-trace — Lot Traceability</h1>
+  <div id="language-switcher">
+    <button type="button" id="lang-switch-en" data-lang="en">EN</button>
+    <button type="button" id="lang-switch-fr" data-lang="fr">FR</button>
+  </div>
+</header>
+
+<nav id="main-nav">
+  <button type="button" class="nav-btn" data-view="view-lots" data-i18n="navLots">Lots</button>
+  <button type="button" class="nav-btn" data-view="view-processing" data-i18n="navProcessing">Processing</button>
+  <button type="button" class="nav-btn" data-view="view-passport" data-i18n="navPassport">Lot Passport</button>
+  <button type="button" class="nav-btn" data-view="view-recall" data-i18n="navRecall">Recall</button>
+  <button type="button" class="nav-btn" data-view="view-export" data-i18n="navExport">Export</button>
+  <button type="button" class="nav-btn" data-view="view-products" data-i18n="navProducts">Products</button>
+</nav>
+
+<div id="toast" class="hidden"></div>
+
+<main id="app-main">
+
+  <!-- ============================ Chargen (Lots) ========================== -->
+  <section id="view-lots" class="view active">
+    <h2 data-i18n="navLots">Lots</h2>
+
+    <form id="lot-form" class="card">
+      <h3 data-i18n="createLot">Create Lot</h3>
+      <div class="form-row">
+        <label for="lot-product-id" data-i18n="product">Product</label>
+        <select id="lot-product-id" required></select>
+      </div>
+      <div class="form-row">
+        <label for="lot-weight-kg" data-i18n="weight">Weight (kg)</label>
+        <input type="number" id="lot-weight-kg" min="0" step="0.01" required>
+      </div>
+      <div class="form-row">
+        <label for="lot-farmer-id" data-i18n="farmer">Farmer / Cooperative</label>
+        <input type="text" id="lot-farmer-id">
+      </div>
+      <div class="form-row">
+        <label for="lot-village" data-i18n="village">Village</label>
+        <input type="text" id="lot-village">
+      </div>
+      <div class="form-row">
+        <label for="lot-h3" data-i18n="h3Cell">H3 Cell</label>
+        <input type="text" id="lot-h3">
+      </div>
+      <div class="form-row">
+        <label for="lot-harvest-date" data-i18n="harvestDate">Harvest Date</label>
+        <input type="date" id="lot-harvest-date">
+      </div>
+      <button type="submit" data-i18n="createLot">Create Lot</button>
+    </form>
+
+    <div class="card">
+      <h3 data-i18n="search">Search</h3>
+      <div class="form-row">
+        <label for="search-lot-id" data-i18n="lotId">Lot ID</label>
+        <input type="text" id="search-lot-id">
+      </div>
+      <div class="form-row">
+        <label for="search-farmer-id" data-i18n="farmer">Farmer</label>
+        <input type="text" id="search-farmer-id">
+      </div>
+      <div class="form-row">
+        <label for="search-product-id" data-i18n="product">Product</label>
+        <select id="search-product-id"><option value=""></option></select>
+      </div>
+      <div class="form-row">
+        <label for="search-date-from" data-i18n="dateFrom">From</label>
+        <input type="date" id="search-date-from">
+      </div>
+      <div class="form-row">
+        <label for="search-date-to" data-i18n="dateTo">To</label>
+        <input type="date" id="search-date-to">
+      </div>
+      <button type="button" id="btn-search" data-i18n="search">Search</button>
+    </div>
+
+    <table id="lots-table">
+      <thead>
+        <tr>
+          <th data-i18n="lotId">Lot ID</th>
+          <th data-i18n="product">Product</th>
+          <th data-i18n="weight">Weight (kg)</th>
+          <th data-i18n="farmer">Farmer</th>
+          <th data-i18n="harvestDate">Harvest Date</th>
+          <th data-i18n="status">Status</th>
+        </tr>
+      </thead>
+      <tbody id="lots-table-body"></tbody>
+    </table>
+
+    <div id="lot-detail" class="card hidden">
+      <h3><span data-i18n="events">Events</span> — <span id="lot-detail-id"></span></h3>
+
+      <form id="event-form">
+        <div class="form-row">
+          <label for="event-type" data-i18n="eventType">Event Type</label>
+          <select id="event-type" required></select>
+        </div>
+        <div class="form-row">
+          <label for="event-recorded-by" data-i18n="recordedBy">Recorded by</label>
+          <input type="text" id="event-recorded-by">
+        </div>
+        <div class="form-row">
+          <label for="event-note" data-i18n="reason">Note</label>
+          <input type="text" id="event-note">
+        </div>
+        <button type="submit" data-i18n="addEvent">Add Event</button>
+      </form>
+      <p class="hint" data-i18n="reversalHint">Events are immutable — corrections are made by appending a reversal event.</p>
+
+      <table id="lot-events-table">
+        <thead>
+          <tr>
+            <th data-i18n="date">Date</th>
+            <th data-i18n="eventType">Event Type</th>
+            <th data-i18n="recordedBy">Recorded by</th>
+            <th>Payload</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="lot-events-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ======================= Verarbeitung (Split/Merge) =================== -->
+  <section id="view-processing" class="view">
+    <h2 data-i18n="processingTitle">Processing (Split / Merge)</h2>
+
+    <div class="card">
+      <h3 data-i18n="parentLots">Parent Lots (input kg)</h3>
+      <div id="parent-rows"></div>
+      <button type="button" id="btn-add-parent" data-i18n="addParent">Add parent</button>
+    </div>
+
+    <div class="card">
+      <h3 data-i18n="childLots">Child Lots (output kg)</h3>
+      <div id="child-rows"></div>
+      <button type="button" id="btn-add-child" data-i18n="addChild">Add child</button>
+    </div>
+
+    <div class="card" id="balance-panel">
+      <span data-i18n="inputSum">Total input</span>: <span id="balance-input">0</span> kg |
+      <span data-i18n="outputSum">Total output</span>: <span id="balance-output">0</span> kg |
+      <span data-i18n="yieldLoss">Yield loss</span>: <span id="balance-loss">0</span> kg
+      <div id="balance-error" class="error hidden" data-i18n="massBalanceError"></div>
+    </div>
+
+    <button type="button" id="btn-run-processing" data-i18n="runProcessing">Run Processing</button>
+    <div id="processing-result"></div>
+  </section>
+
+  <!-- =========================== Chargen-Pass ============================= -->
+  <section id="view-passport" class="view">
+    <h2 data-i18n="passportTitle">Lot Passport</h2>
+    <div class="card no-print">
+      <div class="form-row">
+        <label for="passport-lot-id" data-i18n="selectLot">Select a lot</label>
+        <select id="passport-lot-id"></select>
+      </div>
+      <button type="button" id="btn-show-passport" data-i18n="showPassport">Show Passport</button>
+      <button type="button" id="btn-print-passport" data-i18n="print">Print</button>
+    </div>
+    <div id="passport-print-area"></div>
+  </section>
+
+  <!-- ======================= Rueckruf-Simulation ========================= -->
+  <section id="view-recall" class="view">
+    <h2 data-i18n="recallTitle">Recall Simulation</h2>
+    <div class="card">
+      <div class="form-row">
+        <label for="recall-lot-id" data-i18n="selectLot">Select a lot</label>
+        <select id="recall-lot-id"></select>
+      </div>
+      <button type="button" id="btn-run-recall" data-i18n="runRecall">Run Recall</button>
+    </div>
+    <div id="recall-result"></div>
+  </section>
+
+  <!-- ============================== Export ================================ -->
+  <section id="view-export" class="view">
+    <h2 data-i18n="exportTitle">Export Event Chain</h2>
+    <div class="card">
+      <div class="form-row">
+        <label for="export-lot-id" data-i18n="selectLot">Select a lot</label>
+        <select id="export-lot-id"><option value="" data-i18n="allLots">All lots</option></select>
+      </div>
+      <button type="button" id="btn-export-json" data-i18n="exportJson">Export JSON</button>
+      <button type="button" id="btn-export-csv" data-i18n="exportCsv">Export CSV</button>
+    </div>
+    <pre id="export-preview"></pre>
+  </section>
+
+  <!-- ============================= Produkte =============================== -->
+  <section id="view-products" class="view">
+    <h2 data-i18n="productsTitle">Products</h2>
+    <form id="product-form" class="card">
+      <div class="form-row">
+        <label for="product-name-en" data-i18n="nameEn">Name (EN)</label>
+        <input type="text" id="product-name-en" required>
+      </div>
+      <div class="form-row">
+        <label for="product-name-fr" data-i18n="nameFr">Name (FR)</label>
+        <input type="text" id="product-name-fr" required>
+      </div>
+      <div class="form-row">
+        <label for="product-hs-code" data-i18n="hsCode">HS Code</label>
+        <input type="text" id="product-hs-code">
+      </div>
+      <button type="submit" data-i18n="save">Save</button>
+    </form>
+    <table id="products-table">
+      <thead>
+        <tr>
+          <th data-i18n="nameEn">Name (EN)</th>
+          <th data-i18n="nameFr">Name (FR)</th>
+          <th data-i18n="hsCode">HS Code</th>
+        </tr>
+      </thead>
+      <tbody id="products-table-body"></tbody>
+    </table>
+  </section>
+
+</main>
+
+<!--
+  Alle Module lokal per relativem Pfad ueber klassische <script>-Tags
+  (kein Bundler, kein CDN, keine externen Requests). Reihenfolge nach
+  Abhaengigkeiten: models/storage/i18n/qrcode/trace zuerst, dann app.js.
+-->
+<script src="js/models.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/qrcode.js"></script>
+<script src="js/trace.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

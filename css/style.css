@@ -1,0 +1,265 @@
+/*
+ * style.css
+ *
+ * Schlichtes Basislayout fuer agri-trace. Enthaelt eine druckoptimierte
+ * @media print-Regel: beim Drucken wird ausschliesslich der Chargen-Pass
+ * (#passport-print-area) dargestellt, der Rest der App-Shell ausgeblendet.
+ * Keine externen Web-Fonts, keine Fremd-CDN -- ausschliesslich lokale Styles.
+ */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1a1a1a;
+  background-color: #f5f5f0;
+}
+
+header#app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background-color: #2e5339;
+  color: #ffffff;
+}
+
+header#app-header h1 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+#language-switcher button {
+  margin-left: 6px;
+  padding: 6px 12px;
+  border: 1px solid #ffffff;
+  background-color: transparent;
+  color: #ffffff;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+#language-switcher button.active-lang {
+  background-color: #ffffff;
+  color: #2e5339;
+  font-weight: bold;
+}
+
+nav#main-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 8px 20px;
+  background-color: #d8e4d8;
+}
+
+nav#main-nav .nav-btn {
+  padding: 8px 14px;
+  border: 1px solid #2e5339;
+  background-color: #ffffff;
+  color: #2e5339;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+nav#main-nav .nav-btn.active {
+  background-color: #2e5339;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+main#app-main {
+  padding: 20px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.view {
+  display: none;
+}
+
+.view.active {
+  display: block;
+}
+
+.card {
+  background-color: #ffffff;
+  border: 1px solid #cddccd;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+h2 {
+  color: #2e5339;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.form-row label {
+  flex: 0 0 190px;
+  font-weight: bold;
+}
+
+.form-row input,
+.form-row select {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid #b7c7b7;
+  border-radius: 4px;
+}
+
+button {
+  padding: 8px 14px;
+  border: none;
+  background-color: #2e5339;
+  color: #ffffff;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-right: 6px;
+}
+
+button:hover {
+  background-color: #3c6b4a;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background-color: #ffffff;
+}
+
+th,
+td {
+  border: 1px solid #cddccd;
+  padding: 6px 8px;
+  text-align: left;
+  font-size: 0.9rem;
+  vertical-align: top;
+}
+
+th {
+  background-color: #eef3ee;
+}
+
+tr.clickable {
+  cursor: pointer;
+}
+
+tr.clickable:hover {
+  background-color: #f0f6f0;
+}
+
+tr.reversed-row td {
+  text-decoration: line-through;
+  color: #999999;
+}
+
+tr.storno-row td {
+  background-color: #fff3f0;
+  font-style: italic;
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: #666666;
+}
+
+.error {
+  color: #b00020;
+  font-weight: bold;
+  margin-top: 6px;
+}
+
+.hidden {
+  display: none;
+}
+
+.proc-row {
+  gap: 8px;
+}
+
+#toast {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  background-color: #2e5339;
+  color: #ffffff;
+  padding: 10px 16px;
+  border-radius: 6px;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ---------------------------- Chargen-Pass ---------------------------- */
+.passport {
+  background-color: #ffffff;
+  border: 2px solid #2e5339;
+  border-radius: 6px;
+  padding: 18px;
+}
+
+.passport-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.passport-qr svg {
+  width: 160px;
+  height: 160px;
+}
+
+#export-preview {
+  background-color: #1a1a1a;
+  color: #d8e4d8;
+  padding: 12px;
+  border-radius: 6px;
+  overflow: auto;
+  max-height: 380px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* -------------------------- Druck: nur Pass -------------------------- */
+@media print {
+  body {
+    background-color: #ffffff;
+  }
+
+  #app-header,
+  #main-nav,
+  #toast,
+  .no-print {
+    display: none !important;
+  }
+
+  .view {
+    display: none !important;
+  }
+
+  #view-passport {
+    display: block !important;
+  }
+
+  #view-passport h2 {
+    display: none;
+  }
+
+  main#app-main {
+    padding: 0;
+  }
+
+  .passport {
+    border: 2px solid #000000;
+  }
+}
