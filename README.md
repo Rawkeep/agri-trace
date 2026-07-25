@@ -83,9 +83,10 @@ Demo-Produkte an (Kakaobohnen/Cashewnuesse) als Startpunkt.
 | Datei | Rolle |
 |-------|-------|
 | `index.html` | App-Shell: alle Views (Lots, Processing, Passport, Recall, Export, Products), laedt die Module per `<script>`-Tags in Abhaengigkeitsreihenfolge |
+| `js/shared/offline-kit.js` | Geteilte generische Storage-/i18n-Engine (IndexedDB/localStorage-Backend, `t()`/`setLanguage()`/`getLanguage()`), byte-identisch in fuenf Schwester-Repos (agri-aggregator, agri-lease, cold-chain-manager, feed-mill, market-link). Keine App-spezifischen Daten |
 | `js/models.js` | Datenmodell (Product, Lot, Event, LotLink) + Validierung; definiert erlaubte Ereignistypen/Qualitaetsstufen/Lot-Status |
-| `js/storage.js` | Persistenz: IndexedDB primaer, localStorage-Fallback, durchgehend Promise-basiert. Ereignis-Store ist **append-only** (`appendEvent` verweigert das Ueberschreiben existierender IDs) |
-| `js/i18n.js` | Woerterbuch Englisch/Franzoesisch + `t()`/`setLanguage()`/`getLanguage()`, Sprachpersistenz in `localStorage` |
+| `js/storage.js` | Persistenz-Wrapper um `OfflineKit.createOfflineStorage` mit agri-trace-spezifischem DB-Namen/Stores. Ereignis-Store ist **append-only** (`appendEvent` verweigert das Ueberschreiben existierender IDs); es gibt bewusst keine generischen delete-Methoden in der oeffentlichen API |
+| `js/i18n.js` | Woerterbuch Englisch/Franzoesisch via `OfflineKit.createI18n()` — `t()`/`setLanguage()`/`getLanguage()`, Sprachpersistenz in `localStorage` |
 | `js/qrcode.js` | Lokaler QR-Encoder (rein funktional, `toModules`) + Canvas-/SVG-Renderer fuer den Chargen-Pass |
 | `js/trace.js` | **Kern-Logik** (rein funktional, seiteneffektfrei, Node-getestet): Storno-Erzeugung, Massenbilanz, Split/Merge-Planung, Rueckruf-Simulation, Suche, JSON-/CSV-Export |
 | `js/app.js` | Orchestrierung (nur Browser): DOM-Bindings, i18n-Anwendung, Aufruf von Storage/Trace, Datei-Downloads |
@@ -93,7 +94,8 @@ Demo-Produkte an (Kakaobohnen/Cashewnuesse) als Startpunkt.
 | `tests/` | Node-Tests fuer Modelle, Storno/Append-only, Verarbeitung/Massenbilanz, Rueckruf, QR-Encoder, Export sowie ein Syntax-Check aller `js/`-Dateien |
 
 Alle JS-Module sind klassische IIFEs, keine ES-Module — Ladereihenfolge in
-`index.html` ist relevant (models → storage → i18n → qrcode → trace → app).
+`index.html` ist relevant (offline-kit → models → storage → i18n → qrcode →
+trace → app).
 
 ## Invarianten
 

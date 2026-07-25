@@ -237,9 +237,12 @@
 
 <!--
   Alle Module lokal per relativem Pfad ueber klassische <script>-Tags
-  (kein Bundler, kein CDN, keine externen Requests). Reihenfolge nach
-  Abhaengigkeiten: models/storage/i18n/qrcode/trace zuerst, dann app.js.
+  (kein Bundler, kein CDN, keine externen Requests). js/shared/offline-kit.js
+  (geteilte Storage-/i18n-Engine, identisch in den fuenf Schwester-Repos)
+  muss vor storage.js/i18n.js laden. Danach models/storage/i18n/qrcode/trace,
+  zuletzt app.js.
 -->
+<script src="js/shared/offline-kit.js"></script>
 <script src="js/models.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/i18n.js"></script>

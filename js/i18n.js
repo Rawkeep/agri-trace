@@ -5,9 +5,20 @@
  * Franzoesisch (fr) fuer alle UI-Kernbegriffe, plus t(key, lang) und
  * setLanguage/getLanguage mit Persistenz in localStorage. Keine externen
  * Requests, keine externen i18n-Bibliotheken. Standardsprache: Englisch.
+ *
+ * Die generische i18n-Engine (t/setLanguage/getLanguage) lebt in
+ * js/shared/offline-kit.js -- identisch in allen sechs Rawkeep-Offline-Apps.
+ * Diese Datei haelt nur das agri-trace-spezifische Woerterbuch.
  */
 (function (global) {
   'use strict';
+
+  // OfflineKit lokal aufloesen: im Browser via global, in Node via require.
+  var OfflineKit =
+    global.OfflineKit ||
+    (typeof module !== 'undefined' && module.exports && typeof require === 'function'
+      ? require('./shared/offline-kit.js')
+      : undefined);
 
   var LANGUAGE_STORAGE_KEY = 'agri_trace_lang';
   var SUPPORTED_LANGUAGES = ['en', 'fr'];
@@ -117,55 +128,12 @@
     selectLot: { en: 'Select a lot', fr: 'Selectionner un lot' }
   };
 
-  function isSupportedLanguage(lang) {
-    return SUPPORTED_LANGUAGES.indexOf(lang) !== -1;
-  }
-
-  function hasLocalStorage() {
-    return typeof global.localStorage !== 'undefined' && global.localStorage !== null;
-  }
-
-  /**
-   * Uebersetzt einen Schluessel. Ohne lang wird die aktive Sprache genutzt;
-   * fehlt der Schluessel, wird er selbst zurueckgegeben.
-   */
-  function t(key, lang) {
-    var targetLang = isSupportedLanguage(lang) ? lang : getLanguage();
-    var entry = TRANSLATIONS[key];
-    if (!entry) {
-      return key;
-    }
-    return entry[targetLang] || entry[DEFAULT_LANGUAGE] || key;
-  }
-
-  function setLanguage(lang) {
-    if (!isSupportedLanguage(lang)) {
-      throw new Error('Nicht unterstuetzte Sprache: ' + lang + ' (erlaubt: en, fr).');
-    }
-    if (hasLocalStorage()) {
-      global.localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
-    }
-    return lang;
-  }
-
-  function getLanguage() {
-    if (hasLocalStorage()) {
-      var stored = global.localStorage.getItem(LANGUAGE_STORAGE_KEY);
-      if (isSupportedLanguage(stored)) {
-        return stored;
-      }
-    }
-    return DEFAULT_LANGUAGE;
-  }
-
-  var TraceI18n = {
-    SUPPORTED_LANGUAGES: SUPPORTED_LANGUAGES,
-    DEFAULT_LANGUAGE: DEFAULT_LANGUAGE,
-    TRANSLATIONS: TRANSLATIONS,
-    t: t,
-    setLanguage: setLanguage,
-    getLanguage: getLanguage
-  };
+  var TraceI18n = OfflineKit.createI18n({
+    languageStorageKey: LANGUAGE_STORAGE_KEY,
+    supportedLanguages: SUPPORTED_LANGUAGES,
+    defaultLanguage: DEFAULT_LANGUAGE,
+    translations: TRANSLATIONS
+  });
 
   global.TraceI18n = TraceI18n;
 
