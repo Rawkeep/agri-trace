@@ -103,6 +103,18 @@
     exportTitle: { en: 'Export Event Chain', fr: 'Exporter la chaine d\'evenements' },
     exportJson: { en: 'Export JSON', fr: 'Exporter JSON' },
     exportCsv: { en: 'Export CSV', fr: 'Exporter CSV' },
+    hofketteImportTitle: {
+      en: 'Import Hofkette (data bridge)',
+      fr: 'Importer Hofkette (pont de donnees)'
+    },
+    hofketteImportHint: {
+      en: 'Import hofkette-v1 records from agri-flock, feed-mill etc. Duplicates are skipped (idempotent).',
+      fr: 'Importe des justificatifs hofkette-v1 de agri-flock, feed-mill etc. Les doublons sont ignores (idempotent).'
+    },
+    hofketteImportBtn: { en: 'Import Hofkette', fr: 'Importer Hofkette' },
+    hofketteImported: { en: 'imported', fr: 'importes' },
+    hofketteSkipped: { en: 'skipped (already known)', fr: 'ignores (deja connus)' },
+    hofketteNoFile: { en: 'Please choose a CSV file first.', fr: 'Choisir un fichier CSV.' },
     allLots: { en: 'All lots', fr: 'Tous les lots' },
 
     // Produkte

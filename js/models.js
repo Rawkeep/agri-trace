@@ -25,7 +25,12 @@
     'verpackung', // Verpackung mit Losnummer
     'transport', // Transport
     'verkauf', // Verkauf/Export
-    'storno' // Storno-Ereignis (Korrektur, hebt fachlich ein Vorereignis auf)
+    'storno', // Storno-Ereignis (Korrektur, hebt fachlich ein Vorereignis auf)
+    // Zusatztypen der Datenbruecke (Hofkette v1, siehe js/bridge.js):
+    'ernte', // Ernte-Charge vom Feld
+    'produktion', // Erzeugung im Stall (z.B. Eier-Tagescharge aus agri-flock)
+    'verbrauch', // Verbrauch einer Charge (z.B. Futter an eine Herde)
+    'auslagerung' // Auslagerung aus Lager/Kuehlraum
   ];
 
   // Qualitaetsstufen fuer Grading.

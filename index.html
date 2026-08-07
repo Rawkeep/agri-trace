@@ -201,6 +201,15 @@
       <button type="button" id="btn-export-csv" data-i18n="exportCsv">Export CSV</button>
     </div>
     <pre id="export-preview"></pre>
+    <div class="card">
+      <h3 data-i18n="hofketteImportTitle">Import Hofkette (data bridge)</h3>
+      <p data-i18n="hofketteImportHint">Import hofkette-v1 records from agri-flock, feed-mill etc. Duplicates are skipped (idempotent).</p>
+      <div class="form-row">
+        <input type="file" id="hofkette-file" accept=".csv,text/csv">
+        <button type="button" id="btn-hofkette-import" data-i18n="hofketteImportBtn">Import Hofkette</button>
+      </div>
+      <p id="hofkette-status"></p>
+    </div>
   </section>
 
   <!-- ============================= Produkte =============================== -->
@@ -245,6 +254,8 @@
 <script src="js/i18n.js"></script>
 <script src="js/qrcode.js"></script>
 <script src="js/trace.js"></script>
+<script src="js/hofkette.js"></script>
+<script src="js/bridge.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

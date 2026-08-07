@@ -714,6 +714,44 @@
     $('btn-export-csv').addEventListener('click', function () {
       onExport('csv');
     });
+    $('btn-hofkette-import').addEventListener('click', onHofketteImport);
+  }
+
+  // Datenbruecke: Hofkette-v1-CSV einlesen, Plan bauen (rein, js/bridge.js),
+  // persistieren, Zustand neu laden. Duplikate werden gezaehlt, nicht erneut
+  // angehaengt (append-only bleibt unverletzt).
+  function onHofketteImport() {
+    var input = $('hofkette-file');
+    var status = $('hofkette-status');
+    if (!input.files || input.files.length === 0) {
+      status.textContent = t('hofketteNoFile');
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        var chainEvents = global.Hofkette.parseCsv(String(reader.result));
+        var plan = global.TraceBridge.planImport(chainEvents, {
+          products: state.products,
+          lots: state.lots,
+          links: state.lotLinks,
+          events: state.events
+        });
+        global.TraceBridge.applyPlan(plan, Storage).then(function (result) {
+          return reload().then(function () {
+            renderAll();
+            status.textContent = result.imported + ' ' + t('hofketteImported') +
+              ', ' + result.skipped + ' ' + t('hofketteSkipped');
+            toast(t('hofketteImportTitle') + ': ' + result.imported);
+          });
+        }).catch(function (err) {
+          status.textContent = err.message;
+        });
+      } catch (err) {
+        status.textContent = err.message;
+      }
+    };
+    reader.readAsText(input.files[0]);
   }
 
   function renderAll() {
